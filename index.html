@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#E6ECF8">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B1228">
+<meta name="color-scheme" content="light dark">
+<title>Jimson Tiaga</title>
+<meta name="description" content="Hey, you found Jimson's keychain. Add him on Facebook or follow him on Instagram.">
+<meta property="og:title" content="Jimson Tiaga">
+<meta property="og:description" content="You tapped Jimson's keychain. Come say hi on Facebook or Instagram.">
+<meta property="og:type" content="profile">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&display=swap" rel="stylesheet">
+<style>
+/* Personal NFC link page: people land here after tapping a keychain on their phone.
+   Soft studio backdrop, one animated character, brand-colored social buttons. */
+:root{
+  --base:#E6ECF8; --key:#FFE0BD; --fill:#C9DAFF; --glow:#E3D9FF; --floor:#C9D3E6;
+  --ink:#101830; --ink-soft:#4B5677;
+  --accent:#FFB020;
+  --chip:rgba(255,255,255,.6); --chip-line:rgba(16,24,48,.08);
+  --bubble-bg:#101830; --bubble-text:#FFFFFF; --halo:rgba(255,255,255,.75);
+  --fb:#0866FF; --fb-deep:#0552D1;
+  --shadow:rgba(33,52,110,.28);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --base:#0B1228; --key:#3A2A1C; --fill:#1B2B5E; --glow:#2A1F4F; --floor:#070C1C;
+    --ink:#F1F4FF; --ink-soft:#A9B3D4;
+    --chip:rgba(255,255,255,.08); --chip-line:rgba(255,255,255,.12);
+    --bubble-bg:#F1F4FF; --bubble-text:#101830; --halo:rgba(130,150,255,.18); --shadow:rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --base:#0B1228; --key:#3A2A1C; --fill:#1B2B5E; --glow:#2A1F4F; --floor:#070C1C;
+  --ink:#F1F4FF; --ink-soft:#A9B3D4;
+  --chip:rgba(255,255,255,.08); --chip-line:rgba(255,255,255,.12);
+  --bubble-bg:#F1F4FF; --bubble-text:#101830; --halo:rgba(130,150,255,.18); --shadow:rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{height:100%;background:var(--base);scroll-padding-top:env(safe-area-inset-top,0px);
+  -webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{margin:0;min-height:100%;color:var(--ink);background:var(--base);overflow-x:hidden;
+  font-family:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;font-optical-sizing:auto}
+a,button,[role="button"]{touch-action:manipulation}
+
+/* clean animated backdrop: three soft lights drifting slowly */
+.stage{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--base)}
+.blob{position:absolute;display:block;border-radius:50%;filter:blur(70px);opacity:.85;will-change:transform}
+.b1{width:70vmax;height:70vmax;left:-25vmax;top:-20vmax;background:var(--fill);animation:d1 22s ease-in-out infinite alternate}
+.b2{width:55vmax;height:55vmax;right:-20vmax;top:5vmax;background:var(--key);animation:d2 26s ease-in-out infinite alternate}
+.b3{width:60vmax;height:60vmax;left:10vmax;bottom:-35vmax;background:var(--glow);animation:d3 30s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate(18vmax,14vmax) scale(1.1)}}
+@keyframes d2{to{transform:translate(-16vmax,20vmax) scale(.9)}}
+@keyframes d3{to{transform:translate(12vmax,-18vmax) scale(1.15)}}
+
+.page{position:relative;z-index:1;max-width:440px;margin:0 auto;min-height:100svh;
+  padding:18px 22px 32px;display:flex;flex-direction:column}
+
+.chip{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+  padding:8px 14px 8px 10px;border-radius:999px;background:var(--chip);
+  border:1px solid var(--chip-line);font-size:.9rem;font-weight:500;color:var(--ink-soft);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.chip svg{width:18px;height:18px;color:var(--ink)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 0 rgba(255,176,32,.6);animation:ping 2s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,176,32,.55)}100%{box-shadow:0 0 0 10px rgba(255,176,32,0)}}
+
+/* hero: one clean character, soft halo, bottom fades into the backdrop */
+.hero{position:relative;height:440px;margin-top:6px;display:grid;place-items:end center}
+.halo{position:absolute;left:50%;top:44%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;
+  background:radial-gradient(circle,var(--halo) 0%,transparent 70%);
+  animation:halo 6s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.08);opacity:.8}}
+.figure{position:relative;width:280px;outline:none;border-radius:32px;cursor:pointer;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  animation:enter 1s .15s both cubic-bezier(.2,1.2,.3,1)}
+@keyframes enter{from{opacity:0;transform:translateY(60px) scale(.94)}to{opacity:1;transform:none}}
+.figure:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+.mover{transform-origin:50% 100%;will-change:transform}
+.buddy{position:relative;transform-origin:50% 85%;
+  -webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);mask-image:linear-gradient(180deg,#000 74%,transparent 99%)}
+.char{display:block;width:100%;height:auto;pointer-events:none}
+.lids{position:absolute;height:auto;opacity:0;pointer-events:none}
+.buddy.boop{animation:boop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes boop{0%{transform:scale(1,1)}20%{transform:scale(1.06,.93)}45%{transform:scale(.97,1.05) translateY(-14px)}70%{transform:scale(1.02,.99)}100%{transform:scale(1,1)}}
+.bubble{position:absolute;top:318px;left:-4px;z-index:5;pointer-events:none;
+  background:var(--bubble-bg);color:var(--bubble-text);font-weight:600;font-size:.95rem;
+  padding:9px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 24px var(--shadow);
+  transform:scale(0) translateY(-6px);transform-origin:70% 0%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.bubble::after{content:"";position:absolute;right:30px;top:-6px;width:12px;height:12px;background:inherit;transform:rotate(45deg);border-radius:2px}
+.bubble.show{transform:scale(1)}
+.hint{position:absolute;left:0;right:0;bottom:-4px;margin:0;text-align:center;font-size:.85rem;color:var(--ink-soft)}
+
+.intro{margin-top:18px}
+h1{margin:0;font-size:clamp(2.1rem,9vw,2.6rem);line-height:1.02;font-weight:750;letter-spacing:-.025em;font-stretch:88%}
+.intro p{margin:10px 0 0;font-size:1.08rem;line-height:1.5;color:var(--ink-soft);max-width:34ch}
+
+.links{display:grid;gap:12px;margin-top:20px}
+.btn{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
+  padding:9px 18px 9px 9px;border-radius:999px;text-decoration:none;color:#FFFFFF;outline:none;overflow:hidden;
+  transition:transform .14s cubic-bezier(.2,.8,.2,1),box-shadow .2s ease;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.btn::before{content:"";position:absolute;inset:0 0 50% 0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
+/* Facebook: current Meta blue (#0866FF), passes 4.5:1 with white text */
+.fb{background:var(--fb);box-shadow:0 14px 28px -12px rgba(8,102,255,.7)}
+/* Instagram: brand gradient, orange > magenta > purple > blue */
+.ig{background:linear-gradient(100deg,#F58529 0%,#DD2A7B 34%,#8134AF 70%,#515BD4 100%);
+  box-shadow:0 14px 28px -12px rgba(221,42,123,.65)}
+.ig .lbl{text-shadow:0 1px 2px rgba(80,0,40,.35)}
+.btn .ico{position:relative;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+  background:#FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+/* logo files supplied by the page owner; shown at 40px (Instagram minimum is 29px) */
+.btn .ico img{display:block;width:40px;height:40px;pointer-events:none}
+.ig .ico img{width:36px;height:36px}
+.btn .lbl{position:relative;font-size:1.15rem;font-weight:650;line-height:1.2}
+.btn small{display:block;font-size:.88rem;font-weight:500;color:rgba(255,255,255,.92)}
+.btn .arr{position:relative;width:22px;height:22px;opacity:.85;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.btn:active{transform:scale(.97)}
+.fb.poked{transform:scale(.97);box-shadow:0 0 0 5px rgba(8,102,255,.3),0 8px 18px -8px rgba(8,102,255,.6)}
+.ig.poked{transform:scale(.97);box-shadow:0 0 0 5px rgba(221,42,123,.3),0 8px 18px -8px rgba(221,42,123,.6)}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--base),0 0 0 6px var(--accent)}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{transform:translateY(-2px)}
+  .btn:hover .arr{transform:translate(3px,-3px);opacity:1}
+}
+
+footer{margin-top:auto;padding-top:30px;font-size:.85rem;color:var(--ink-soft)}
+
+.spark{position:fixed;width:14px;height:14px;pointer-events:none;z-index:10;
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+
+.rise{animation:rise .7s both cubic-bezier(.2,1,.3,1)}
+.d1{animation-delay:.55s}.d2{animation-delay:.68s}.d3{animation-delay:.8s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .rise,.chip .dot,.blob,.halo,.figure{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="stage" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+<main class="page">
+  <p class="chip"><span class="dot" aria-hidden="true"></span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M228,156v36c0,13.85-1.63,26.52-4.58,35.68a12,12,0,1,1-22.84-7.36c2.14-6.650,3.42-17.24,3.42-28.32V156a8,8,0,0,0-16,0v4a12,12,0,0,1-24,0V140a8,8,0,0,0-16,0v12a12,12,0,0,1-24,0V84a8,8,0,0,0-16,0V192a12,12,0,0,1-22.18,6.34l-18.68-30-.21-.34A8,8,0,0,0,53,175.92L78.27,217.8a12,12,0,0,1-20.56,12.39l-25.31-42-.12-.2A32,32,0,0,1,84,150.83V84a32,32,0,0,1,64,0v25a32,32,0,0,1,36.78,17A32,32,0,0,1,228,156ZM56,96A12,12,0,0,0,68,84a48,48,0,0,1,96,0,12,12,0,0,0,24,0A72,72,0,0,0,44,84,12,12,0,0,0,56,96Z"/></svg>You tapped Jimson's keychain</p>
+
+  <section class="hero" aria-label="Jimson">
+    <div class="halo" aria-hidden="true"></div>
+    <div class="figure" id="charm" role="button" tabindex="0" aria-label="Boop Jimson">
+      <div class="mover" id="mover">
+        <div class="buddy" id="buddy">
+          <img class="char" alt="Jimson giving a thumbs up" draggable="false" width="600" height="922" src="jimson.webp">
+          <img class="lids" id="lids" alt="" aria-hidden="true" draggable="false" style="left:32.333%;top:19.957%;width:27.667%" src="lids.webp">
+        </div>
+      </div>
+    </div>
+    <div class="bubble" id="bubble" aria-hidden="true">Hi there!</div>
+    <p class="hint">Tap him</p>
+  </section>
+
+  <section class="intro rise d1">
+    <h1>Jimson Tiaga</h1>
+    <p>Hey, you found my keychain. Pick one and come say hi.</p>
+  </section>
+
+  <nav class="links rise d2" aria-label="Social profiles">
+    <a class="btn fb" id="btnFb" href="https://www.facebook.com/jimson.tiaga.3" target="_blank" rel="noopener noreferrer">
+      <span class="ico"><img src="fb.webp" alt="" width="40" height="40" draggable="false"></span>
+      <span class="lbl">Facebook<small>Add Jimson Tiaga</small></span>
+      <span class="arr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z"/></svg></span>
+    </a>
+    <a class="btn ig" id="btnIg" href="https://www.instagram.com/jjjttt_tttjjj" target="_blank" rel="noopener noreferrer">
+      <span class="ico"><img src="ig.webp" alt="" width="40" height="40" draggable="false"></span>
+      <span class="lbl">Instagram<small>@jjjttt_tttjjj</small></span>
+      <span class="arr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z"/></svg></span>
+    </a>
+  </nav>
+
+  <footer class="rise d3">Tap the keychain again anytime.</footer>
+</main>
+<script>
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var charm = document.getElementById('charm'), mover = document.getElementById('mover');
+  var buddy = document.getElementById('buddy'), lids = document.getElementById('lids');
+  var bubble = document.getElementById('bubble');
+  var btnFb = document.getElementById('btnFb'), btnIg = document.getElementById('btnIg');
+
+  var bt;
+  function say(t, ms){
+    bubble.textContent = t; bubble.classList.add('show');
+    clearTimeout(bt); bt = setTimeout(function(){ bubble.classList.remove('show'); }, ms || 1800);
+  }
+  var colors = ['#FFB020','#FFFFFF','#FFD27A','#FFE3C4'];
+  function sparkle(cx, cy, n){
+    if(reduce) return;
+    for(var i=0;i<n;i++){
+      (function(i){
+        var s = document.createElement('div'); s.className = 'spark';
+        s.style.background = colors[i % colors.length]; s.style.left = '0'; s.style.top = '0';
+        var size = 8 + Math.random()*10; s.style.width = s.style.height = size + 'px';
+        document.body.appendChild(s);
+        var a = Math.random()*Math.PI*2, sp = 160 + Math.random()*200;
+        var x = cx, y = cy, vx = Math.cos(a)*sp, vy = Math.sin(a)*sp - 160, rot = 0, life = 0, t0 = performance.now();
+        function step(t){
+          var dt = Math.min((t - t0)/1000, .033); t0 = t; life += dt;
+          vy += 600*dt; x += vx*dt; y += vy*dt; rot += 360*dt;
+          s.style.transform = 'translate(' + (x - size/2) + 'px,' + (y - size/2) + 'px) rotate(' + rot + 'deg)';
+          s.style.opacity = Math.max(0, 1 - life/1);
+          if(life < 1) requestAnimationFrame(step); else s.remove();
+        }
+        requestAnimationFrame(step);
+      })(i);
+    }
+  }
+
+  // blink
+  function blink(){ lids.style.opacity = 1; setTimeout(function(){ lids.style.opacity = 0; }, 110); }
+  (function loop(){ setTimeout(function(){ blink(); if(Math.random() < .25) setTimeout(blink, 260); loop(); }, 2400 + Math.random()*3400); })();
+
+  // springy pose, whole character moves as one clean piece
+  var keys = ['lean','dx','dy','sc'];
+  var rest = {lean:0, dx:0, dy:0, sc:1};
+  var pose = Object.assign({}, rest), vel = {lean:0, dx:0, dy:0, sc:0}, tgt = Object.assign({}, rest);
+  var look = {x:0, y:0}, busyUntil = 0, lastUser = 0, timers = [];
+  function set(t){ for(var k in t) tgt[k] = t[k]; }
+  function later(ms, fn){ timers.push(setTimeout(fn, ms)); }
+  function clearSeq(){ timers.forEach(clearTimeout); timers = []; }
+
+  function present(which, fromUser){
+    var btn = which === 'fb' ? btnFb : btnIg, low = which === 'ig';
+    clearSeq(); busyUntil = performance.now() + 1600;
+    set({lean: low ? 2 : -2, dx: low ? 6 : -6, dy: low ? 14 : 9, sc: 1.02});
+    later(100, blink);
+    later(460, function(){
+      set({sc: 1.045, dy: low ? 18 : 13});
+      btn.classList.add('poked');
+      var r = btn.getBoundingClientRect();
+      sparkle(r.left + 58, r.top + r.height/2, 9);
+      if(fromUser && navigator.vibrate) try{ navigator.vibrate(10); }catch(_){}
+    });
+    later(680, function(){ btn.classList.remove('poked'); set({sc: 1.02}); });
+    later(760, function(){ say(which === 'fb' ? 'Add me on Facebook!' : 'Follow me on Instagram!', 1700); });
+    later(1150, function(){ set(rest); });
+  }
+  function hop(){
+    buddy.classList.remove('boop'); void buddy.offsetWidth; buddy.classList.add('boop');
+    clearTimeout(buddy._t); buddy._t = setTimeout(function(){ buddy.classList.remove('boop'); }, 650);
+  }
+  var lines = ['Hi there!','Nice tap!','Thumbs up!','Glad you came!'], li = 0;
+  function boop(){
+    clearSeq(); set(rest); hop(); blink();
+    li = (li + 1) % lines.length; say(lines[li]);
+    var r = charm.getBoundingClientRect(); sparkle(r.left + r.width/2, r.top + r.height*0.4, 14);
+    busyUntil = performance.now() + 900; lastUser = performance.now();
+    if(navigator.vibrate) try{ navigator.vibrate(12); }catch(_){}
+  }
+  charm.addEventListener('click', boop);
+  charm.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); boop(); } });
+
+  function hook(btn, which){
+    var go = function(){ lastUser = performance.now(); present(which, true); };
+    btn.addEventListener('pointerenter', function(e){ if(e.pointerType === 'mouse') go(); });
+    btn.addEventListener('focus', go);
+    btn.addEventListener('touchstart', function(){ lastUser = performance.now(); }, {passive:true});
+    btn.addEventListener('click', function(){ lastUser = performance.now(); clearSeq(); set(rest); hop(); say('See you there!', 1600); });
+  }
+  hook(btnFb, 'fb'); hook(btnIg, 'ig');
+
+  var turn = 'fb';
+  setInterval(function(){
+    var now = performance.now();
+    if(reduce || now < busyUntil || now - lastUser < 4000 || document.hidden) return;
+    present(turn); turn = turn === 'fb' ? 'ig' : 'fb';
+  }, 5200);
+  setTimeout(function(){ say('Hi there!', 1300); }, 1000);
+  setTimeout(function(){ if(!reduce){ present('fb'); turn = 'ig'; } }, 2600);
+
+  function onPoint(e){
+    var r = charm.getBoundingClientRect();
+    look.x = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width/2))/(window.innerWidth/2)));
+    look.y = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height/2))/(window.innerHeight/2)));
+  }
+  window.addEventListener('pointermove', onPoint);
+  window.addEventListener('pointerdown', onPoint);
+  document.addEventListener('pointerleave', function(){ look.x = look.y = 0; });
+
+  var pt = performance.now();
+  (function anim(now){
+    var dt = Math.min((now - pt)/1000, .033); pt = now;
+    keys.forEach(function(k){
+      vel[k] += ((tgt[k] - pose[k])*90 - vel[k]*15)*dt;
+      pose[k] += vel[k]*dt;
+    });
+    var t = now/1000, m = reduce ? 0 : 1;
+    var bob = Math.sin(t*2.2)*5*m, breath = Math.sin(t*2.2 + .6)*.006*m, sway = Math.sin(t*.8)*.8*m;
+    var lx = now < busyUntil ? 0 : look.x;
+    mover.style.transform =
+      'translate(' + (pose.dx + lx*8).toFixed(2) + 'px,' + (pose.dy + bob).toFixed(2) + 'px)' +
+      ' rotate(' + (pose.lean + sway + lx*1.5).toFixed(2) + 'deg)' +
+      ' scale(' + pose.sc.toFixed(4) + ',' + (pose.sc*(1 + breath)).toFixed(4) + ')';
+    requestAnimationFrame(anim);
+  })(pt);
+})();
+</script>
+</body>
+</html>
